@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --nav-link-icon-width: 40px;
+  --nav-link-icon-height: 30px;
+  --sidebar-width: 300px;
+  --sidebar-left-space: 6px;
+  --avatar-space: 30px;
+  --sidebar-header-height: 80px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* [data-name="sx-nav_item"]:has([data-name="sx-sub_nav"]) {
+  display: grid;
+  grid-template-rows: var(--nav-link-icon-height) 0fr;
+} */
+
+.sx-sub_nav--open {
+  grid-template-rows: var(--nav-link-icon-height) 1fr !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-name="sx-sidebar_button--toggle"] {
+  position: relative;
+  z-index: 0;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+[data-name="sx-sidebar_button--toggle"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @apply border border-purple-900 bg-zinc-900;
+  width: 20px;
+  height: 20px;
+  z-index: -1;
+  transition: all 400ms var(--ease-out-quint);
+  border-radius: 50%;
+  visibility: hidden;
+}
+
+[data-name="sx-sidebar_button--toggle"]:hover::before{
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  visibility: visible;
+  box-shadow: 0px 0px 20px 5px rgb(89, 22, 139);
+}
+
+@theme {
+  --ease-out-quint: cubic-bezier(0.230, 1.000, 0.320, 1.000);
 }

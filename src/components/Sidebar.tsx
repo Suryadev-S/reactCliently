@@ -2,18 +2,32 @@
 import { cn } from "@/utility/cn";
 import { ChevronRight, Flame, Link2, PanelLeft, } from "lucide-react";
 import Link from "next/link";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 
 
-const SubNav = () => {
+const SubNav = ({ isSidebarHidden, setSidebarHide }: { isSidebarHidden: boolean, setSidebarHide: Dispatch<SetStateAction<boolean>> }) => {
     const [open, setOpen] = useState(false);
+    const handleToggleSubNav = () => {
+        if (!isSidebarHidden) {
+            setOpen(!open);
+        } else {
+            setSidebarHide(false);
+            setOpen(true);
+        }
+    }
+
+    useEffect(() => {
+        if (isSidebarHidden && open) {
+            setOpen(false);
+        }
+    }, [isSidebarHidden])
     return (
         <li data-name="sx-nav_item"
-            className={cn("grid transition-[grid-template-rows] duration-[400ms] ease-out-quint hover:bg-purple-950 py-1",
+            className={cn("grid transition-[grid-template-rows,_background-color] duration-[400ms] ease-out-quint hover:bg-purple-950 py-1 ",
                 open ? 'grid-rows-[var(--nav-link-icon-height)_1fr]' : 'grid-rows-[var(--nav-link-icon-height)_0fr]'
             )}>
             <div data-name="sx-sub_nav--trigger"
-                onClick={() => setOpen(!open)}
+                onClick={handleToggleSubNav}
                 className="flex items-stretch">
                 <div data-name="sx-nav_link--icon"
                     className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
@@ -70,16 +84,17 @@ const SubNav = () => {
 
 const Sidebar = ({ children }: { children: ReactNode }) => {
     const navRef = useRef<HTMLDivElement | null>(null);
-    const [open, setOpen] = useState(false);
-    const [hide, setHide] = useState(false);
+    const [open, setOpen] = useState(false); //for mobile devices
+    const [hide, setHide] = useState(false); //for desktop
     const handleToggleSidebar = () => {
         setOpen(!open);
         setHide(!hide);
     }
+
     useEffect(() => {
         const mouseDownListener = (e: MouseEvent) => {
             if (navRef && navRef.current) {
-                if (!navRef.current.contains(e.target as Node)) {
+                if (open && !navRef.current.contains(e.target as Node)) {
                     setOpen(!open);
                 }
             }
@@ -102,7 +117,7 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
                 )}>
                 <aside data-name="sx-sidebar"
                     className="grid grid-flow-col justify-between
-                md:grid-flow-row md:grid-rows-[auto_1fr_auto] md:h-screen bg-zinc-900 text-white ">
+                md:grid-flow-row md:grid-rows-[auto_1fr_auto] md:h-screen bg-zinc-900 text-white">
                     <header
                         className="flex items-center md:h-(--sidebar-header-height) bg-cover">
                         <button
@@ -117,12 +132,12 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
                     </header>
                     <nav
                         ref={navRef}
-                        className={cn('fixed top-0 w-(--sidebar-width) h-screen bg-zinc-900',
+                        className={cn('fixed top-0 w-(--sidebar-width) h-screen bg-zinc-900 transition-[left] duration-[400ms] ease-out-quint',
                             open ? 'left-0' : '-left-(--sidebar-width)', "md:left-0 md:relative md:h-auto"
                         )}>
                         <ul data-name="sx-nav--group">
                             <li data-name="sx-nav_item"
-                                className="flex items-stretch hover:bg-purple-950 py-1">
+                                className="flex items-stretch hover:bg-purple-950 py-1 transition-[background-color] duration-[400ms] ease-out-quint">
                                 <Link href={'#'} data-name="sx-nav_link--icon"
                                     className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
                                     <Link2 />
@@ -133,7 +148,7 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
                                 </Link>
                             </li>
                             <li data-name="sx-nav_item"
-                                className="flex items-stretch hover:bg-purple-950 py-1">
+                                className="flex items-stretch hover:bg-purple-950 py-1 transition-[background-color] duration-[400ms] ease-out-quint">
                                 <Link href={'#'} data-name="sx-nav_link--icon"
                                     className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
                                     <Link2 />
@@ -147,7 +162,8 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
                                 className="flex items-stretch hover:bg-purple-950">
                                 <SubNav />
                             </li> */}
-                            <SubNav />
+                            <SubNav isSidebarHidden={hide} setSidebarHide={setHide} />
+                            <SubNav isSidebarHidden={hide} setSidebarHide={setHide} />
                         </ul>
                     </nav>
                     <footer>

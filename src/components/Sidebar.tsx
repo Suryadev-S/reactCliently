@@ -1,11 +1,12 @@
 'use client'
+import { INavLink, links } from "@/lib/sidebar/Navlinks";
 import { cn } from "@/utility/cn";
-import { ChevronRight, Flame, Link2, PanelLeft, } from "lucide-react";
+import { ChevronRight, PanelLeft, } from "lucide-react";
 import Link from "next/link";
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, Key, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 
 
-const SubNav = ({ isSidebarHidden, setSidebarHide }: { isSidebarHidden: boolean, setSidebarHide: Dispatch<SetStateAction<boolean>> }) => {
+const SubNav = ({ isSidebarHidden, setSidebarHide, nav }: { isSidebarHidden: boolean, setSidebarHide: Dispatch<SetStateAction<boolean>>, nav: INavLink }) => {
     const [open, setOpen] = useState(false);
     const handleToggleSubNav = () => {
         if (!isSidebarHidden) {
@@ -31,11 +32,11 @@ const SubNav = ({ isSidebarHidden, setSidebarHide }: { isSidebarHidden: boolean,
                 className="flex items-stretch">
                 <div data-name="sx-nav_link--icon"
                     className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
-                    <Flame />
+                    {nav.icon}
                 </div>
                 <div data-name="sx-nav_link--text"
                     className="w-[calc(100%-var(--nav-link-icon-width)-var(--sidebar-left-space))] flex items-center">
-                    <span>sub nav</span>
+                    <span>{nav.text}</span>
                     <span data-name="sx-sub_nav--indicator" className="ml-auto">
                         <ChevronRight className={cn({ "rotate-90 transition-[rotate] duration-[400ms] ease-out-quint": open })} />
                     </span>
@@ -44,38 +45,16 @@ const SubNav = ({ isSidebarHidden, setSidebarHide }: { isSidebarHidden: boolean,
             <nav data-name="sx-sub_nav"
                 className="overflow-hidden">
                 <ul data-name="sx-sub_nav--group">
-                    <li data-name="sx-sub_nav_item">
-                        <Link href={'#'} data-name="sx-nav_link--text"
-                            className="ml-[calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2)] 
+                    {nav.subNav?.map((sub, i) => (
+                        <li data-name="sx-sub_nav_item" key={i}>
+                            <Link href={sub.href || '#'} data-name="sx-nav_link--text"
+                                className="ml-[calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2)] 
                             w-[calc(100%-calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2))]
                             block border border-transparent hover:border-purple-500 transition-[border-color] duration-[400ms] ease-out-quint py-1 px-2">
-                            link
-                        </Link>
-                    </li>
-                    <li data-name="sx-sub_nav_item">
-                        <Link href={'#'} data-name="sx-nav_link--text"
-                            className="ml-[calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2)] 
-                            w-[calc(100%-calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2))]
-                            block border border-transparent hover:border-purple-500 transition-[border-color] duration-[400ms] ease-out-quint py-1 px-2">
-                            link
-                        </Link>
-                    </li>
-                    <li data-name="sx-sub_nav_item">
-                        <Link href={'#'} data-name="sx-nav_link--text"
-                            className="ml-[calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2)] 
-                            w-[calc(100%-calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2))]
-                            block border border-transparent hover:border-purple-500 transition-[border-color] duration-[400ms] ease-out-quint py-1 px-2">
-                            link
-                        </Link>
-                    </li>
-                    <li data-name="sx-sub_nav_item">
-                        <Link href={'#'} data-name="sx-nav_link--text"
-                            className="ml-[calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2)] 
-                            w-[calc(100%-calc(var(--nav-link-icon-width)+var(--sidebar-left-space)*2))]
-                            block border border-transparent hover:border-purple-500 transition-[border-color] duration-[400ms] ease-out-quint py-1 px-2">
-                            link
-                        </Link>
-                    </li>
+                                {sub.text}
+                            </Link>
+                        </li>
+                    ))}
                 </ul>
             </nav>
         </li>
@@ -136,34 +115,25 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
                             open ? 'left-0' : '-left-(--sidebar-width)', "md:left-0 md:relative md:h-auto"
                         )}>
                         <ul data-name="sx-nav--group">
-                            <li data-name="sx-nav_item"
-                                className="flex items-stretch hover:bg-purple-950 py-1 transition-[background-color] duration-[400ms] ease-out-quint">
-                                <Link href={'#'} data-name="sx-nav_link--icon"
-                                    className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
-                                    <Link2 />
-                                </Link>
-                                <Link href={'#'} data-name="sx-nav_link--text"
-                                    className="w-[calc(100%-var(--nav-link-icon-width)-var(--sidebar-left-space))] flex items-center">
-                                    <span>link babay</span>
-                                </Link>
-                            </li>
-                            <li data-name="sx-nav_item"
-                                className="flex items-stretch hover:bg-purple-950 py-1 transition-[background-color] duration-[400ms] ease-out-quint">
-                                <Link href={'#'} data-name="sx-nav_link--icon"
-                                    className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
-                                    <Link2 />
-                                </Link>
-                                <Link href={'#'} data-name="sx-nav_link--text"
-                                    className="w-[calc(100%-var(--nav-link-icon-width)-var(--sidebar-left-space))] flex items-center">
-                                    <span>link babay</span>
-                                </Link>
-                            </li>
-                            {/* <li data-name="sx-nav_item"
-                                className="flex items-stretch hover:bg-purple-950">
-                                <SubNav />
-                            </li> */}
-                            <SubNav isSidebarHidden={hide} setSidebarHide={setHide} />
-                            <SubNav isSidebarHidden={hide} setSidebarHide={setHide} />
+                            {links.map((link, i) => {
+                                if (link.subNav) {
+                                    return <SubNav isSidebarHidden={hide} setSidebarHide={setHide} nav={link} key={i} />
+                                }
+                                return (
+                                    <li data-name="sx-nav_item"
+                                        key={i}
+                                        className="flex items-stretch hover:bg-purple-950 py-1 transition-[background-color] duration-[400ms] ease-out-quint">
+                                        <Link href={link.href || '#'} data-name="sx-nav_link--icon"
+                                            className="w-(--nav-link-icon-width) h-(--nav-link-icon-height) mx-(--sidebar-left-space) flex items-center justify-center">
+                                            {link.icon}
+                                        </Link>
+                                        <Link href={link.href || '#'} data-name="sx-nav_link--text"
+                                            className="w-[calc(100%-var(--nav-link-icon-width)-var(--sidebar-left-space))] flex items-center">
+                                            <span>{link.text}</span>
+                                        </Link>
+                                    </li>
+                                )
+                            })}
                         </ul>
                     </nav>
                     <footer>
